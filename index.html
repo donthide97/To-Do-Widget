@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>Minimalist To-Do Widget</title>
     <style>
         :root {
-            /* Minimalist Theme */
+            /* Minimalist Theme (Light Mode) */
             --header-bg: #c8e6c9;
             --body-bg: #f1f8e9;
             --line-color: #37352f;
@@ -20,18 +21,53 @@
             --accent-color-3: #ffc107; /* Amber */
             --accent-color-4: #e91e63; /* Magenta */
             --achievement-color: #ffd700; /* Gold */
+            --widget-border: 1px solid #e0e0e0;
+            --widget-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --widget-radius: 8px;
+            --header-border: 1px solid #a5d6a7;
+            --input-placeholder: rgba(0,0,0,0.3);
+            --checkbox-glow: none;
+            --streak-shadow: none;
         }
 
-        /* Dark Mode support */
         @media (prefers-color-scheme: dark) {
             :root {
+                /* Reference Image Theme (Dark Mode) */
                 --header-bg: #1a1a1a;
-                --body-bg: #0f0f0f;
-                --line-color: #d4d4d4;
+                --body-bg: #121212;
+                --line-color: #2e2e2e;
                 --text-color: #ffffff;
                 --muted-color: #888888;
-                --completed-strike-color: var(--text-color);
+                --completed-strike-color: #00ffa3;
+                --accent-color-2: #00ffa3;
+                --achievement-color: #ff3b5c;
+                --widget-border: 1px solid rgba(255, 255, 255, 0.1);
+                --widget-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                --widget-radius: 20px;
+                --header-border: 1px solid rgba(255, 255, 255, 0.05);
+                --input-placeholder: rgba(255,255,255,0.2);
+                --checkbox-glow: 0 0 12px rgba(0, 255, 163, 0.5);
+                --streak-shadow: 0 0 10px rgba(255, 59, 92, 0.3);
             }
+        }
+
+        /* Explicit Dark Theme Class */
+        body.theme-dark {
+            --header-bg: #1a1a1a;
+            --body-bg: #121212;
+            --line-color: #2e2e2e;
+            --text-color: #ffffff;
+            --muted-color: #888888;
+            --completed-strike-color: #00ffa3;
+            --accent-color-2: #00ffa3;
+            --achievement-color: #ff3b5c;
+            --widget-border: 1px solid rgba(255, 255, 255, 0.1);
+            --widget-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            --widget-radius: 20px;
+            --header-border: 1px solid rgba(255, 255, 255, 0.05);
+            --input-placeholder: rgba(255,255,255,0.2);
+            --checkbox-glow: 0 0 12px rgba(0, 255, 163, 0.5);
+            --streak-shadow: 0 0 10px rgba(255, 59, 92, 0.3);
         }
 
         /* Cyberpunk Theme */
@@ -57,29 +93,31 @@
             padding: 15px;
             display: flex;
             justify-content: center;
-            background-color: transparent;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
         }
 
         .widget-container {
             width: 300px;
             height: 300px;
             background: var(--body-bg);
+            backdrop-filter: blur(10px);
             position: relative;
-            border-radius: 8px;
-            overflow: hidden; /* Revert overflow */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid #e0e0e0;
-            margin-bottom: 0; /* Remove space for cat */
+            border-radius: var(--widget-radius);
+            overflow: hidden;
+            box-shadow: var(--widget-shadow);
+            border: var(--widget-border);
         }
 
         .header {
             background-color: var(--header-bg);
-            height: 40px;
-            border-bottom: 1px solid #a5d6a7;
+            height: 50px;
+            border-bottom: var(--header-border);
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            padding: 0 15px;
+            padding: 0 20px;
             position: relative;
         }
 
@@ -94,7 +132,7 @@
         }
 
         #todo-input::placeholder {
-            color: rgba(0,0,0,0.3);
+            color: var(--input-placeholder);
         }
 
         .todo-list {
@@ -135,6 +173,14 @@
             justify-content: center;
             font-size: 14px;
             font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .checkbox.checked {
+            background-color: var(--accent-color-2);
+            border-color: var(--accent-color-2);
+            color: #000;
+            box-shadow: var(--checkbox-glow);
         }
 
         .checkbox.checked::after {
@@ -143,7 +189,7 @@
 
         .text-container {
             flex-grow: 1;
-            border-bottom: 1.5px solid var(--line-color);
+            border-bottom: 1.5px solid rgba(255,255,255,0.05);
             padding-bottom: 2px;
             font-size: 14px;
             min-height: 20px;
@@ -211,11 +257,7 @@
         }
 
         #reset-btn:hover {
-            background: var(--header-bg);
-            color: var(--text-color);
-        }
-
-        #reset-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
         }
 
@@ -223,22 +265,23 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            right: 40px;
+            right: 45px;
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
-            color: #ff9900;
+            color: var(--achievement-color);
             cursor: pointer;
             user-select: none;
             padding: 5px;
-            border-radius: 4px;
+            border-radius: 8px;
             transition: background 0.2s;
+            text-shadow: var(--streak-shadow);
         }
 
         .streak-container:hover {
-            background: rgba(255, 153, 0, 0.1);
+            background: rgba(128, 128, 128, 0.1);
         }
 
         .streak-flame {
@@ -284,13 +327,22 @@
         // Default theme
         let currentTheme = localStorage.getItem("theme") || "minimalist";
 
+        // URL Parameter Support
+        const urlParams = new URLSearchParams(window.location.search);
+        const themeParam = urlParams.get('theme');
+        if (themeParam) {
+            currentTheme = themeParam;
+        }
+
         function applyTheme(theme) {
             document.body.className = `theme-${theme}`;
-            localStorage.setItem("theme", theme);
+            if (!themeParam) { // Only persist if not forced by URL
+                localStorage.setItem("theme", theme);
+            }
         }
 
         function toggleTheme() {
-            currentTheme = currentTheme === "minimalist" ? "cyberpunk" : "minimalist";
+            currentTheme = currentTheme === "minimalist" ? "dark" : "minimalist";
             applyTheme(currentTheme);
         }
 
