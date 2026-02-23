@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist To-Do Widget</title>
+    <style>
+        :root {
+            /* Minimalist Theme */
+            --header-bg: #c8e6c9;
+            --body-bg: #f1f8e9;
+            --line-color: #37352f;
+            --text-color: #37352f;
+            --muted-color: #acaba9;
+            --completed-text-opacity: 0.5;
+            --completed-font-weight: 300;
+            --completed-strike-color: var(--text-color);
+            --accent-color-1: #00bcd4; /* Cyan */
+            --accent-color-2: #8bc34a; /* Lime */
+            --accent-color-3: #ffc107; /* Amber */
+            --accent-color-4: #e91e63; /* Magenta */
+            --achievement-color: #ffd700; /* Gold */
+        }
+
+        /* Dark Mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --header-bg: #2d3b2d;
+                --body-bg: #191919;
+                --line-color: #d4d4d4;
+                --text-color: #d4d4d4;
+                --muted-color: #666666;
+                --completed-strike-color: var(--text-color);
+            }
+        }
+
+        /* Cyberpunk Theme */
+        body.theme-cyberpunk {
+            --header-bg: #3a0ca3;
+            --body-bg: #1a0033;
+            --line-color: #4cc9f0;
+            --text-color: #f72585;
+            --muted-color: #7b2cbf;
+            --completed-text-opacity: 0.7;
+            --completed-font-weight: 400;
+            --completed-strike-color: #4cc9f0;
+            --accent-color-1: #4cc9f0; /* Electric Blue */
+            --accent-color-2: #f72585; /* Neon Pink */
+            --accent-color-3: #fee440; /* Cyber Yellow */
+            --accent-color-4: #3a0ca3; /* Deep Purple */
+            --achievement-color: #480ca8; /* Darker Purple for Achievement */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            background-color: transparent;
+        }
+
+        .widget-container {
+            width: 100%;
+            max-width: 300px;
+            background: var(--body-bg);
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden; /* Revert overflow */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+            margin-bottom: 0; /* Remove space for cat */
+        }
+
+        .header {
+            background-color: var(--header-bg);
+            height: 40px;
+            border-bottom: 1px solid #a5d6a7;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            position: relative;
+        }
+
+        #todo-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        #todo-input::placeholder {
+            color: rgba(0,0,0,0.3);
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0 15px;
+            margin: 0;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 15px;
+            gap: 10px;
+            position: relative;
+            height: 30px;
+            cursor: grab;
+            transition: transform 0.2s ease, margin 0.2s ease;
+        }
+
+        .todo-item:active {
+            cursor: grabbing;
+        }
+
+        .todo-item.dragging {
+            opacity: 0;
+            background: rgba(0,0,0,0.05);
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid var(--line-color);
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+        }
+
+        .text-container {
+            flex-grow: 1;
+            border-bottom: 1.5px solid var(--line-color);
+            padding-bottom: 2px;
+            font-size: 14px;
+            min-height: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .text-container.completed {
+            opacity: var(--completed-text-opacity);
+            font-weight: var(--completed-font-weight);
+            color: var(--muted-color); /* Muted color after strike-through */
+        }
+
+        @keyframes strike-through-animation {
+            0% { transform: scaleX(0); }
+            100% { transform: scaleX(1); }
+        }
+
+        .text-container.completed::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1.5px;
+            background-color: var(--completed-strike-color);
+            transform-origin: left;
+            transform: scaleX(1);
+        }
+
+        .text-container.completed.animating::before {
+            animation: strike-through-animation 0.5s ease-out forwards;
+        }
+
+        .delete-x {
+            cursor: pointer;
+            color: var(--muted-color);
+            font-size: 14px;
+            padding-left: 5px;
+            margin-bottom: 4px;
+            opacity: 0.5;
+        }
+
+        .delete-x:hover {
+            color: #ff5252;
+            opacity: 1;
+        }
+
+        #reset-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted-color);
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            z-index: 10; /* Make sure it's above other elements if needed */
+        }
+
+        #reset-btn:hover {
+            background: var(--header-bg);
+            color: var(--text-color);
+        }
+
+        #reset-btn:hover {
+            color: var(--text-color);
+        }
+
+        .streak-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff9900;
+            cursor: pointer;
+            user-select: none;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .streak-container:hover {
+            background: rgba(255, 153, 0, 0.1);
+        }
+
+        .streak-flame {
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body class="theme-minimalist">
+    <div class="widget-container">
+        <div class="header">
+            <input type="text" id="todo-input" placeholder="Aufgabe hinzufügen..." maxlength="50">
+            <div class="streak-container" id="streak-container" onclick="resetStreak()" title="Doppelklick zum Zurücksetzen">
+                <span class="streak-count" id="streak-count">0</span>
+                <span class="streak-flame">🔥</span>
+            </div>
+        </div>
+        
+        <div id="todo-list" class="todo-list">
+            <!-- Items will be injected here -->
+        </div>
+
+        <button id="reset-btn" title="Alle löschen">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        </button>
+        
+        </div>
+
+    <script>
+        const input = document.getElementById("todo-input");
+        const listContainer = document.getElementById("todo-list");
+        const resetBtn = document.getElementById("reset-btn");
+        const streakCountEl = document.getElementById("streak-count");
+
+        let todos = JSON.parse(localStorage.getItem("notion-todos-v2")) || [];
+        let completedCount = parseInt(localStorage.getItem("notion-streak-v1")) || 0;
+
+        function saveTodos() {
+            localStorage.setItem("notion-todos-v2", JSON.stringify(todos));
+            localStorage.setItem("notion-streak-v1", completedCount.toString());
+        }
+
+        // Default theme
+        let currentTheme = localStorage.getItem("theme") || "minimalist";
+
+        function applyTheme(theme) {
+            document.body.className = `theme-${theme}`;
+            localStorage.setItem("theme", theme);
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === "minimalist" ? "cyberpunk" : "minimalist";
+            applyTheme(currentTheme);
+        }
+
+        function renderTodos() {
+            streakCountEl.textContent = completedCount;
+            listContainer.innerHTML = "";
+            listContainer.addEventListener('dragover', handleDragOver);
+            const defaultColor = "var(--achievement-color)";
+            
+            // Show up to 5 items
+            for (let i = 0; i < 5; i++) {
+                const todo = todos[i];
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "todo-item";
+                
+                if (todo) {
+                    itemDiv.draggable = true;
+                    itemDiv.dataset.index = i;
+                    
+                    itemDiv.addEventListener('dragstart', handleDragStart);
+                    itemDiv.addEventListener('dragend', handleDragEnd);
+
+                    const checkboxColor = todo.completed ? "var(--accent-color-2)" : defaultColor;
+                    itemDiv.innerHTML = `
+                        <div class="checkbox ${todo.completed ? "checked" : ""}" style="border-color: ${checkboxColor}" onclick="toggleTodo(${i})"></div>
+                        <div class="text-container ${todo.completed ? "completed" : ""} ${todo.animating ? "animating" : ""}" style="border-bottom-color: ${checkboxColor}" onclick="toggleTodo(${i})">${todo.text}</div>
+                        <div class="delete-x" onclick="deleteTodo(${i})">×</div>
+                    `;
+                } else {
+                    // Empty slot: using the "completed" color (accent-color-2) as requested
+                    const lockedColor = "var(--accent-color-2)";
+                    itemDiv.innerHTML = `
+                        <div class="checkbox" style="cursor: default; opacity: 0.3; border-color: ${lockedColor};"></div>
+                        <div class="text-container" style="border-bottom-color: ${lockedColor}; cursor: default;"></div>
+                        <div class="delete-x" style="visibility: hidden;">×</div>
+                    `;
+                }
+                listContainer.appendChild(itemDiv);
+            }
+        }
+
+        function addTodo() {
+            const text = input.value.trim();
+            if (text && todos.length < 5) {
+                todos.push({ text, completed: false });
+                input.value = "";
+                saveTodos();
+                renderTodos();
+            } else if (todos.length >= 5) {
+                alert("Maximal 5 Aufgaben erlaubt.");
+                input.value = "";
+            }
+        }
+
+        function toggleTodo(index) {
+            if (todos[index]) {
+                todos[index].completed = !todos[index].completed;
+                if (todos[index].completed) {
+                    completedCount++;
+                    todos[index].animating = true;
+                    saveTodos();
+                    renderTodos();
+                    // Remove animation class after it finishes but keep completed state
+                    setTimeout(() => {
+                        if (todos[index]) {
+                            todos[index].animating = false;
+                            saveTodos();
+                            renderTodos();
+                        }
+                    }, 500);
+                } else {
+                    if (completedCount > 0) completedCount--;
+                    saveTodos();
+                    renderTodos();
+                }
+            }
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            saveTodos();
+            renderTodos();
+        }
+
+        function resetTodos() {
+            todos = [];
+            saveTodos();
+            renderTodos();
+        }
+
+        let lastStreakClick = 0;
+        function resetStreak() {
+            const now = Date.now();
+            if (now - lastStreakClick < 500) { // Double click detected
+                completedCount = 0;
+                saveTodos();
+                renderTodos();
+            }
+            lastStreakClick = now;
+        }
+
+        // Drag and Drop Logic
+        let draggedItemIndex = null;
+
+        function handleDragStart(e) {
+            draggedItemIndex = parseInt(this.dataset.index);
+            setTimeout(() => this.classList.add('dragging'), 0);
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const draggingItem = document.querySelector('.dragging');
+            if (!draggingItem) return;
+            
+            const siblings = [...listContainer.querySelectorAll('.todo-item:not(.dragging)')];
+            const nextSibling = siblings.find(sibling => {
+                const rect = sibling.getBoundingClientRect();
+                return e.clientY <= rect.top + rect.height / 2;
+            });
+
+            if (nextSibling) {
+                listContainer.insertBefore(draggingItem, nextSibling);
+            } else {
+                // If we're at the end, make sure we don't insert after empty slots
+                const lastRealTask = siblings.filter(s => s.draggable).pop();
+                if (lastRealTask) {
+                    listContainer.insertBefore(draggingItem, lastRealTask.nextSibling);
+                }
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            updateTodosOrder();
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedItemIndex = null;
+            updateTodosOrder();
+        }
+
+        function updateTodosOrder() {
+            const currentItems = [...listContainer.querySelectorAll('.todo-item')];
+            const newTodos = [];
+            currentItems.forEach(item => {
+                if (item.draggable) {
+                    const originalIndex = parseInt(item.dataset.index);
+                    newTodos.push(todos[originalIndex]);
+                }
+            });
+            
+            // Check if order actually changed to avoid unnecessary renders
+            if (JSON.stringify(newTodos) !== JSON.stringify(todos)) {
+                todos = newTodos;
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        input.onkeypress = (e) => {
+            if (e.key === "Enter") addTodo();
+        };
+
+        resetBtn.onclick = resetTodos;
+
+        applyTheme(currentTheme); // Apply theme on load
+        renderTodos();
+    </script>
+</body>
+</html>
