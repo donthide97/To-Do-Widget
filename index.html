@@ -7,34 +7,39 @@
     <title>Minimalist To-Do Widget</title>
     <style>
         :root {
-            /* Notion-Blue Integration (Dark Mode Default) */
-            --header-bg: rgba(25, 25, 25, 0.8);
-            --body-bg: rgba(25, 25, 25, 0.8);
-            --line-color: rgba(85, 165, 255, 0.15);
-            --text-color: #ffffff;
-            --muted-color: #7a8491; /* Dämpftes Blau-Grau */
+            /* Notion-Blue Integration (Light Mode Default) */
+            --header-bg: #ffffff;
+            --body-bg: #ffffff;
+            --line-color: rgba(55, 53, 47, 0.08); /* Notion light gray divider */
+            --text-color: #37352f; /* Notion standard text color */
+            --muted-color: #9b9a97; /* Notion light gray text */
             --completed-text-opacity: 0.5;
             --completed-font-weight: 300;
             --completed-strike-color: rgba(85, 165, 255, 0.4);
-            --accent-blue: #55a5ff;
-            --line-completed: rgba(85, 165, 255, 0.3);
-            --achievement-color: #55a5ff;
-            --widget-border: 0.3cqw solid #2c2c2c;
+            --accent-blue: #2383e2; /* Clearer Notion blue for light mode */
+            --line-completed: rgba(35, 131, 226, 0.2);
+            --achievement-color: #2383e2;
+            --widget-border: 0.3cqw solid #e0e0e0;
             --widget-shadow: none;
             --widget-radius: 4cqw;
-            --header-border: 0.3cqw solid rgba(85, 165, 255, 0.1);
-            --input-placeholder: rgba(255, 255, 255, 0.2);
+            --header-border: 0.3cqw solid #f1f1f1;
+            --input-placeholder: rgba(55, 53, 47, 0.3);
             --checkbox-glow: none;
-            --streak-shadow: 0 0 3.3cqw rgba(85, 165, 255, 0.2);
+            --streak-shadow: 0 0 3.3cqw rgba(85, 165, 255, 0.1);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
                 --header-bg: #191919;
                 --body-bg: #191919;
-                --line-color: #2c2c2c;
+                --line-color: rgba(85, 165, 255, 0.15);
                 --text-color: #ffffff;
-                --muted-color: #888888;
+                --muted-color: #7a8491;
+                --accent-blue: #55a5ff;
+                --widget-border: 0.3cqw solid #2c2c2c;
+                --header-border: 0.3cqw solid rgba(85, 165, 255, 0.1);
+                --input-placeholder: rgba(255, 255, 255, 0.2);
+                --streak-shadow: 0 0 3.3cqw rgba(85, 165, 255, 0.2);
             }
         }
 
@@ -42,11 +47,14 @@
         body.theme-dark {
             --header-bg: #191919;
             --body-bg: #191919;
-            --line-color: #2c2c2c;
+            --line-color: rgba(85, 165, 255, 0.15);
             --text-color: #ffffff;
-            --muted-color: #888888;
+            --muted-color: #7a8491;
+            --accent-blue: #55a5ff;
             --widget-border: 0.3cqw solid #2c2c2c;
             --header-border: 0.3cqw solid rgba(85, 165, 255, 0.1);
+            --input-placeholder: rgba(255, 255, 255, 0.2);
+            --streak-shadow: 0 0 3.3cqw rgba(85, 165, 255, 0.2);
         }
 
         /* Cyberpunk Theme */
@@ -194,12 +202,13 @@
         }
 
         .text-container:hover {
-            color: #ffffff;
+            color: var(--text-color);
+            opacity: 1;
         }
 
         #todo-input:focus + .text-container,
         #todo-input:not(:placeholder-shown) {
-            color: #ffffff;
+            color: var(--text-color);
         }
 
         .text-container.completed {
@@ -431,7 +440,7 @@
 
                     itemDiv.innerHTML = `
                         <div class="checkbox ${todo.completed ? "checked" : ""}" onclick="toggleTodo(${i})"></div>
-                        <div class="text-container ${todo.completed ? "completed" : ""} ${todo.animating ? "animating" : ""}" onclick="toggleTodo(${i})" style="${todo.completed ? "" : "color: #ffffff;"}">${todo.text}</div>
+                        <div class="text-container ${todo.completed ? "completed" : ""} ${todo.animating ? "animating" : ""}" onclick="toggleTodo(${i})" style="${todo.completed ? "" : "color: var(--text-color);"}">${todo.text}</div>
                         <div class="delete-x" onclick="deleteTodo(${i})">×</div>
                     `;
                 } else {
