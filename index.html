@@ -7,67 +7,44 @@
     <title>Minimalist To-Do Widget</title>
     <style>
         :root {
-            /* Minimalist Theme (Light Mode) */
-            --header-bg: #c8e6c9;
-            --body-bg: #f1f8e9;
-            --line-color: #37352f;
-            --text-color: #37352f;
-            --muted-color: #acaba9;
+            /* Notion-Blue Integration (Dark Mode Default) */
+            --header-bg: rgba(25, 25, 25, 0.8);
+            --body-bg: rgba(25, 25, 25, 0.8);
+            --line-color: rgba(85, 165, 255, 0.15);
+            --text-color: #ffffff;
+            --muted-color: #7a8491; /* Dämpftes Blau-Grau */
             --completed-text-opacity: 0.5;
             --completed-font-weight: 300;
-            --completed-strike-color: var(--text-color);
-            --accent-color-1: #00bcd4; /* Cyan */
-            --accent-color-2: #8bc34a; /* Lime */
-            --accent-color-3: #ffc107; /* Amber */
-            --accent-color-4: #e91e63; /* Magenta */
-            --achievement-color: #ffd700; /* Gold */
-            --widget-border: 1px solid #e0e0e0;
-            --widget-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            --widget-radius: 8px;
-            --header-border: 1px solid #a5d6a7;
-            --input-placeholder: rgba(0,0,0,0.3);
+            --completed-strike-color: rgba(85, 165, 255, 0.4);
+            --accent-blue: #55a5ff;
+            --line-completed: rgba(85, 165, 255, 0.3);
+            --achievement-color: #55a5ff;
+            --widget-border: 1px solid #2c2c2c;
+            --widget-shadow: none;
+            --widget-radius: 4cqw;
+            --header-border: 1px solid rgba(85, 165, 255, 0.1);
+            --input-placeholder: rgba(255, 255, 255, 0.2);
             --checkbox-glow: none;
-            --streak-shadow: none;
+            --streak-shadow: 0 0 10px rgba(85, 165, 255, 0.2);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* Reference Image Theme (Dark Mode) */
-                --header-bg: #1a1a1a;
-                --body-bg: #121212;
-                --line-color: #2e2e2e;
+                --header-bg: #191919;
+                --body-bg: #191919;
+                --line-color: #2c2c2c;
                 --text-color: #ffffff;
                 --muted-color: #888888;
-                --completed-strike-color: #00ffa3;
-                --accent-color-2: #00ffa3;
-                --achievement-color: #ff3b5c;
-                --widget-border: 1px solid rgba(255, 255, 255, 0.1);
-                --widget-shadow: 0 10px 30px rgba(0,0,0,0.5);
-                --widget-radius: 20px;
-                --header-border: 1px solid rgba(255, 255, 255, 0.05);
-                --input-placeholder: rgba(255,255,255,0.2);
-                --checkbox-glow: 0 0 12px rgba(0, 255, 163, 0.5);
-                --streak-shadow: 0 0 10px rgba(255, 59, 92, 0.3);
             }
         }
 
         /* Explicit Dark Theme Class */
         body.theme-dark {
-            --header-bg: #1a1a1a;
-            --body-bg: #121212;
-            --line-color: #2e2e2e;
+            --header-bg: #191919;
+            --body-bg: #191919;
+            --line-color: #2c2c2c;
             --text-color: #ffffff;
             --muted-color: #888888;
-            --completed-strike-color: #00ffa3;
-            --accent-color-2: #00ffa3;
-            --achievement-color: #ff3b5c;
-            --widget-border: 1px solid rgba(255, 255, 255, 0.1);
-            --widget-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            --widget-radius: 20px;
-            --header-border: 1px solid rgba(255, 255, 255, 0.05);
-            --input-placeholder: rgba(255,255,255,0.2);
-            --checkbox-glow: 0 0 12px rgba(0, 255, 163, 0.5);
-            --streak-shadow: 0 0 10px rgba(255, 59, 92, 0.3);
         }
 
         /* Cyberpunk Theme */
@@ -90,34 +67,40 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 15px;
+            padding: 0;
             display: flex;
             justify-content: center;
+            align-items: center;
             background-color: var(--body-bg);
             color: var(--text-color);
             transition: background-color 0.3s ease;
+            container-type: size;
+            width: 100vw;
+            height: 100vh;
         }
 
         .widget-container {
-            width: 300px;
-            height: 300px;
+            width: 95cqw;
+            height: auto;
+            min-height: 95cqh;
             background: var(--body-bg);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px) saturate(150%);
             position: relative;
             border-radius: var(--widget-radius);
             overflow: hidden;
             box-shadow: var(--widget-shadow);
             border: var(--widget-border);
+            max-width: 100%;
         }
 
         .header {
             background-color: var(--header-bg);
-            height: 50px;
+            height: 16.6cqw;
             border-bottom: var(--header-border);
-            margin-bottom: 20px;
+            margin-bottom: 6.6cqw;
             display: flex;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 6.6cqw;
             position: relative;
         }
 
@@ -126,7 +109,7 @@
             background: transparent;
             border: none;
             outline: none;
-            font-size: 14px;
+            font-size: 4.6cqw;
             color: var(--text-color);
             font-weight: 500;
         }
@@ -137,19 +120,25 @@
 
         .todo-list {
             list-style: none;
-            padding: 0 15px;
+            padding: 0 5cqw;
             margin: 0;
         }
 
         .todo-item {
             display: flex;
             align-items: flex-end;
-            margin-bottom: 15px;
-            gap: 10px;
+            margin-bottom: 3.3cqw;
+            padding-bottom: 1.3cqw;
+            gap: 3.3cqw;
             position: relative;
-            height: 30px;
+            height: 10cqw;
             cursor: grab;
             transition: transform 0.2s ease, margin 0.2s ease;
+            border-bottom: 1px solid var(--line-color);
+        }
+
+        .todo-item.completed {
+            border-bottom-color: var(--line-completed);
         }
 
         .todo-item:active {
@@ -162,25 +151,26 @@
         }
 
         .checkbox {
-            width: 18px;
-            height: 18px;
-            border: 1.5px solid var(--line-color);
+            width: 5cqw;
+            height: 5cqw;
+            border: 0.4cqw solid rgba(85, 165, 255, 0.3);
             cursor: pointer;
             flex-shrink: 0;
-            margin-bottom: 4px;
+            margin-bottom: 0.5cqw;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 3.3cqw;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 0.8cqw;
+            transition: all 0.2s ease;
         }
 
         .checkbox.checked {
-            background-color: var(--accent-color-2);
-            border-color: var(--accent-color-2);
-            color: #000;
-            box-shadow: var(--checkbox-glow);
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #191919;
+            box-shadow: 0 0 8px rgba(85, 165, 255, 0.4);
         }
 
         .checkbox.checked::after {
@@ -189,14 +179,25 @@
 
         .text-container {
             flex-grow: 1;
-            border-bottom: 1.5px solid rgba(255,255,255,0.05);
-            padding-bottom: 2px;
-            font-size: 14px;
-            min-height: 20px;
+            border-bottom: none; /* Lines are handled by .todo-item */
+            padding-bottom: 0;
+            font-size: 4.6cqw;
+            min-height: 6.6cqw;
             cursor: pointer;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--muted-color);
+            transition: color 0.2s ease;
+        }
+
+        .text-container:hover {
+            color: #ffffff;
+        }
+
+        #todo-input:focus + .text-container,
+        #todo-input:not(:placeholder-shown) {
+            color: #ffffff;
         }
 
         .text-container.completed {
@@ -216,7 +217,7 @@
             left: 0;
             top: 50%;
             width: 100%;
-            height: 1.5px;
+            height: 0.5cqw;
             background-color: var(--completed-strike-color);
             transform-origin: left;
             transform: scaleX(1);
@@ -229,9 +230,9 @@
         .delete-x {
             cursor: pointer;
             color: var(--muted-color);
-            font-size: 14px;
-            padding-left: 5px;
-            margin-bottom: 4px;
+            font-size: 4.6cqw;
+            padding-left: 1.6cqw;
+            margin-bottom: 1.3cqw;
             opacity: 0.5;
         }
 
@@ -242,18 +243,23 @@
 
         #reset-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 3.3cqw;
+            right: 3.3cqw;
             background: none;
             border: none;
             cursor: pointer;
             color: var(--muted-color);
             display: flex;
             align-items: center;
-            padding: 5px;
+            padding: 1.6cqw;
             border-radius: 50%;
             transition: background 0.2s;
-            z-index: 10; /* Make sure it's above other elements if needed */
+            z-index: 10;
+        }
+
+        #reset-btn svg {
+            width: 4.6cqw;
+            height: 4.6cqw;
         }
 
         #reset-btn:hover {
@@ -265,19 +271,20 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            right: 45px;
+            right: 12cqw; /* Positioned left of reset-btn (3.3cqw + ~5-8cqw space) */
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-size: 15px;
+            gap: 1.3cqw;
+            font-size: 5cqw;
             font-weight: bold;
-            color: var(--achievement-color);
+            color: var(--accent-blue);
             cursor: pointer;
             user-select: none;
-            padding: 5px;
-            border-radius: 8px;
-            transition: background 0.2s;
-            text-shadow: var(--streak-shadow);
+            padding: 1.6cqw;
+            border-radius: 2.6cqw;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 10px rgba(85, 165, 255, 0.4);
+            z-index: 5;
         }
 
         .streak-container:hover {
@@ -285,7 +292,44 @@
         }
 
         .streak-flame {
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 12cqw; /* Base size */
+            height: 12cqw;
+            margin-right: -5cqw;
+            margin-left: -2cqw;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .streak-flame.active {
+            width: 22cqw; /* Large size when tasks are done */
+            height: 22cqw;
+            margin-right: -7cqw;
+            margin-left: -4cqw;
+        }
+
+        .streak-flame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: none !important;
+        }
+
+        /* Error Feedback */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .input-error {
+            animation: shake 0.4s ease-in-out;
+            color: #ff5555 !important;
+        }
+
+        .input-error::placeholder {
+            color: rgba(255, 85, 85, 0.4) !important;
         }
 
     </style>
@@ -346,17 +390,35 @@
             applyTheme(currentTheme);
         }
 
+        function updateStreakIcon() {
+            const streakFlame = document.querySelector(".streak-flame");
+            if (!streakFlame) return;
+            
+            // Zähle erledigte Aufgaben in der aktuellen Liste
+            const currentDone = todos.filter(t => t.completed).length;
+            
+            if (currentDone > 0) {
+                const imgPath = `source/task${Math.min(currentDone, 5)}.png`;
+                streakFlame.innerHTML = `<img src="${imgPath}" alt="Streak Flame">`;
+                streakFlame.classList.add("active");
+            } else {
+                // Initialzustand oder 0 Aufgaben erledigt
+                streakFlame.innerHTML = `<img src="source/task1.png" alt="Streak Flame" style="opacity: 0.5;">`;
+                streakFlame.classList.remove("active");
+            }
+        }
+
         function renderTodos() {
+            updateStreakIcon();
             streakCountEl.textContent = completedCount;
             listContainer.innerHTML = "";
             listContainer.addEventListener('dragover', handleDragOver);
-            const defaultColor = "var(--achievement-color)";
             
             // Show up to 5 items
             for (let i = 0; i < 5; i++) {
                 const todo = todos[i];
                 const itemDiv = document.createElement("div");
-                itemDiv.className = "todo-item";
+                itemDiv.className = "todo-item" + (todo && todo.completed ? " completed" : "");
                 
                 if (todo) {
                     itemDiv.draggable = true;
@@ -365,18 +427,16 @@
                     itemDiv.addEventListener('dragstart', handleDragStart);
                     itemDiv.addEventListener('dragend', handleDragEnd);
 
-                    const checkboxColor = todo.completed ? "var(--accent-color-2)" : defaultColor;
                     itemDiv.innerHTML = `
-                        <div class="checkbox ${todo.completed ? "checked" : ""}" style="border-color: ${checkboxColor}" onclick="toggleTodo(${i})"></div>
-                        <div class="text-container ${todo.completed ? "completed" : ""} ${todo.animating ? "animating" : ""}" style="border-bottom-color: ${checkboxColor}" onclick="toggleTodo(${i})">${todo.text}</div>
+                        <div class="checkbox ${todo.completed ? "checked" : ""}" onclick="toggleTodo(${i})"></div>
+                        <div class="text-container ${todo.completed ? "completed" : ""} ${todo.animating ? "animating" : ""}" onclick="toggleTodo(${i})" style="${todo.completed ? "" : "color: #ffffff;"}">${todo.text}</div>
                         <div class="delete-x" onclick="deleteTodo(${i})">×</div>
                     `;
                 } else {
-                    // Empty slot: using the "completed" color (accent-color-2) as requested
-                    const lockedColor = "var(--accent-color-2)";
+                    // Empty slot
                     itemDiv.innerHTML = `
-                        <div class="checkbox" style="cursor: default; opacity: 0.3; border-color: ${lockedColor};"></div>
-                        <div class="text-container" style="border-bottom-color: ${lockedColor}; cursor: default;"></div>
+                        <div class="checkbox" style="cursor: default; opacity: 0.1;"></div>
+                        <div class="text-container" style="cursor: default;"></div>
                         <div class="delete-x" style="visibility: hidden;">×</div>
                     `;
                 }
@@ -391,9 +451,12 @@
                 input.value = "";
                 saveTodos();
                 renderTodos();
-            } else if (todos.length >= 5) {
-                alert("Maximal 5 Aufgaben erlaubt.");
-                input.value = "";
+            } else if (todos.length >= 5 && text) {
+                // Visual feedback instead of alert
+                input.classList.add("input-error");
+                setTimeout(() => {
+                    input.classList.remove("input-error");
+                }, 400);
             }
         }
 
