@@ -19,13 +19,13 @@
             --accent-blue: #55a5ff;
             --line-completed: rgba(85, 165, 255, 0.3);
             --achievement-color: #55a5ff;
-            --widget-border: 1px solid #2c2c2c;
+            --widget-border: 0.3cqw solid #2c2c2c;
             --widget-shadow: none;
             --widget-radius: 4cqw;
-            --header-border: 1px solid rgba(85, 165, 255, 0.1);
+            --header-border: 0.3cqw solid rgba(85, 165, 255, 0.1);
             --input-placeholder: rgba(255, 255, 255, 0.2);
             --checkbox-glow: none;
-            --streak-shadow: 0 0 10px rgba(85, 165, 255, 0.2);
+            --streak-shadow: 0 0 3.3cqw rgba(85, 165, 255, 0.2);
         }
 
         @media (prefers-color-scheme: dark) {
@@ -45,6 +45,8 @@
             --line-color: #2c2c2c;
             --text-color: #ffffff;
             --muted-color: #888888;
+            --widget-border: 0.3cqw solid #2c2c2c;
+            --header-border: 0.3cqw solid rgba(85, 165, 255, 0.1);
         }
 
         /* Cyberpunk Theme */
@@ -134,7 +136,7 @@
             height: 10cqw;
             cursor: grab;
             transition: transform 0.2s ease, margin 0.2s ease;
-            border-bottom: 1px solid var(--line-color);
+            border-bottom: 0.3cqw solid var(--line-color);
         }
 
         .todo-item.completed {
@@ -151,8 +153,8 @@
         }
 
         .checkbox {
-            width: 5cqw;
-            height: 5cqw;
+            width: 5.5cqw;
+            height: 5.5cqw;
             border: 0.4cqw solid rgba(85, 165, 255, 0.3);
             cursor: pointer;
             flex-shrink: 0;
@@ -160,9 +162,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.3cqw;
+            font-size: 3.8cqw;
             font-weight: bold;
-            border-radius: 0.8cqw;
+            border-radius: 1cqw;
             transition: all 0.2s ease;
         }
 
@@ -170,7 +172,7 @@
             background-color: var(--accent-blue);
             border-color: var(--accent-blue);
             color: #191919;
-            box-shadow: 0 0 8px rgba(85, 165, 255, 0.4);
+            box-shadow: 0 0 2.6cqw rgba(85, 165, 255, 0.4);
         }
 
         .checkbox.checked::after {
@@ -217,7 +219,7 @@
             left: 0;
             top: 50%;
             width: 100%;
-            height: 0.5cqw;
+            height: 0.3cqw;
             background-color: var(--completed-strike-color);
             transform-origin: left;
             transform: scaleX(1);
@@ -319,8 +321,8 @@
         /* Error Feedback */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
+            20%, 60% { transform: translateX(-1.6cqw); }
+            40%, 80% { transform: translateX(1.6cqw); }
         }
 
         .input-error {
